@@ -1,0 +1,8 @@
+EXAMPLE INTERACTION
+
+1. Upload: getting_started.txt
+2. Search: TF-IDF
+3. Result: a relevant passage from getting_started.txt with a similarity score.
+4. Summary: the first useful sentences extracted from the selected document.
+
+The exact score and displayed passages depend on the uploaded files and query. This version uses TF-IDF retrieval and extractive summarization; it does not generate new answers with an LLM.

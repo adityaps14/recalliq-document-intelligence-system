@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecallIQ — Intelligent Document Workspace</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="ambient ambient-one"></div>
+<div class="ambient ambient-two"></div>
+
+<div class="app-layout">
+
+    <aside class="sidebar">
+        <a class="brand" href="{{ url_for('index') }}">
+            <div class="brand-mark">R<span>✦</span></div>
+            <div>
+                <strong>RecallIQ</strong>
+                <small>KNOWLEDGE WORKSPACE</small>
+            </div>
+        </a>
+
+        <div class="sidebar-label">WORKSPACE</div>
+
+        <a class="nav-item active" href="#overview">
+            <span class="nav-icon">◈</span> Overview
+            <span class="nav-indicator"></span>
+        </a>
+
+        <a class="nav-item" href="#documents">
+            <span class="nav-icon">▤</span> My Documents
+            <span class="nav-count">{{ docs|length }}</span>
+        </a>
+
+        <a class="nav-item" href="#search">
+            <span class="nav-icon">⌕</span> Smart Search
+        </a>
+
+        <a class="nav-item" href="#summarizer">
+            <span class="nav-icon">✧</span> AI Summarizer
+        </a>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-orb">✦</div>
+            <h3>Your knowledge,<br>one place.</h3>
+            <p>Search, explore and organize your documents in one workspace.</p>
+            <span class="local-badge"><span></span> LOCAL WORKSPACE</span>
+        </div>
+    </aside>
+
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="breadcrumb">Workspace <span>/</span> <strong>Overview</strong></div>
+            <div class="topbar-right">
+                <span class="secure-badge"><span>●</span> Local environment</span>
+                <div class="avatar">R</div>
+            </div>
+        </header>
+
+        <section class="welcome-section" id="overview">
+            <div class="welcome-copy">
+                <div class="eyebrow"><span class="sparkle">✦</span> YOUR PERSONAL KNOWLEDGE ENGINE</div>
+                <h1>Think less about finding.<br><span>Focus on discovering.</span></h1>
+                <p>Your documents hold the answers. RecallIQ helps you find them faster.</p>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+                <div class="visual-ring ring-one"></div>
+                <div class="visual-ring ring-two"></div>
+                <div class="visual-core">R<span>✦</span></div>
+                <div class="float-card float-card-top"><span>✦</span> Smart retrieval</div>
+                <div class="float-card float-card-bottom"><span>◈</span> Knowledge indexed</div>
+                <div class="visual-dot dot-one"></div>
+                <div class="visual-dot dot-two"></div>
+            </div>
+        </section>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-container">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">TOTAL DOCUMENTS</span>
+                    <span class="stat-icon orange-icon">▤</span>
+                </div>
+                <div class="stat-value">{{ docs|length }}</div>
+                <div class="stat-foot"><span class="status-dot"></span> Documents in your workspace</div>
+                <div class="stat-decoration decoration-one"></div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">INDEXED CONTENT</span>
+                    <span class="stat-icon purple-icon">⌘</span>
+                </div>
+                <div class="stat-value">
+                    {% set total_chars = namespace(value=0) %}
+                    {% for doc in docs %}
+                        {% set total_chars.value = total_chars.value + (doc["text"]|length) %}
+                    {% endfor %}
+                    {% if total_chars.value >= 1000 %}
+                        {{ (total_chars.value / 1000)|round(1) }}<small>k</small>
+                    {% else %}
+                        {{ total_chars.value }}
+                    {% endif %}
+                </div>
+                <div class="stat-foot">Characters available to search</div>
+                <div class="stat-decoration decoration-two"></div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">SEARCH ENGINE</span>
+                    <span class="stat-icon green-icon">⌕</span>
+                </div>
+                <div class="stat-value engine-value">TF-IDF</div>
+                <div class="stat-foot"><span class="status-dot"></span> Relevance-based ranking</div>
+            </article>
+
+            <article class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">WORKSPACE STATUS</span>
+                    <span class="stat-icon blue-icon">◉</span>
+                </div>
+                <div class="stat-value status-value">Ready<span class="live-dot"></span></div>
+                <div class="stat-foot">Your local workspace is available</div>
+            </article>
+        </section>
+
+        <section class="tools-grid">
+
+            <article class="panel search-panel" id="search">
+                <div class="panel-heading">
+                    <div class="panel-icon orange-icon">⌕</div>
+                    <div>
+                        <h2>Smart Search</h2>
+                        <p>Find relevant information across your files.</p>
+                    </div>
+                    <span class="panel-tag">01 / SEARCH</span>
+                </div>
+
+                <form method="POST" class="search-form">
+                    <input type="hidden" name="action" value="search">
+                    <div class="input-wrap">
+                        <span class="input-search-icon">⌕</span>
+                        <input type="text" name="query" placeholder="Ask a question or enter keywords..." value="{{ query or '' }}" required>
+                        <span class="shortcut">↵</span>
+                    </div>
+                    <button type="submit" class="primary-button">Search <span>→</span></button>
+                </form>
+
+                <div class="helper-text"><span>✦</span> Results are ranked by textual relevance.</div>
+
+                {% if query %}
+                    <div class="section-divider"></div>
+                    <div class="results-heading">
+                        <h3>Search results</h3>
+                        <span class="result-count">{{ results|length }} found</span>
+                    </div>
+
+                    {% if results %}
+                        <div class="results-list">
+                            {% for result in results %}
+                                <div class="result-card">
+                                    <div class="result-file-icon">▤</div>
+                                    <div class="result-body">
+                                        <div class="result-file-name">{{ result["name"] }}</div>
+                                        <p>{{ result["text"] }}</p>
+                                    </div>
+                                    <div class="relevance">
+                                        <strong>{{ (result["score"] * 100)|round|int }}%</strong>
+                                        <span>match</span>
+                                        <div class="relevance-track">
+                                            <div style="width: {{ (result['score'] * 100)|round|int }}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">⌕</div>
+                            <h3>No matching results</h3>
+                            <p>Try different keywords or upload another document.</p>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </article>
+
+            <article class="panel upload-panel">
+                <div class="panel-heading">
+                    <div class="panel-icon purple-icon">↑</div>
+                    <div>
+                        <h2>Add Documents</h2>
+                        <p>Bring your knowledge into RecallIQ.</p>
+                    </div>
+                </div>
+
+                <form method="POST" enctype="multipart/form-data" class="upload-form">
+                    <input type="hidden" name="action" value="upload">
+                    <label class="drop-zone" for="document">
+                        <div class="upload-illustration">
+                            <div class="upload-cloud">↑</div>
+                            <span class="upload-star star-a">✦</span>
+                            <span class="upload-star star-b">✧</span>
+                        </div>
+                        <strong>Choose a file to upload</strong>
+                        <span>TXT, Markdown or PDF documents</span>
+                        <span class="browse-label">Browse files <span>↗</span></span>
+                        <input type="file" id="document" name="document" accept=".txt,.md,.pdf" required>
+                    </label>
+                    <button type="submit" class="primary-button upload-button">Upload document <span>↑</span></button>
+                </form>
+
+                <div class="upload-note"><span>◇</span> Maximum file size: 8 MB</div>
+            </article>
+
+        </section>
+
+        <section class="bottom-grid">
+
+            <article class="panel documents-panel" id="documents">
+                <div class="panel-heading document-heading">
+                    <div class="panel-icon blue-icon">▤</div>
+                    <div>
+                        <h2>Your Documents</h2>
+                        <p>Your personal library, all in one place.</p>
+                    </div>
+                    <span class="count-pill">{{ docs|length }} FILES</span>
+                </div>
+
+                {% if docs %}
+                    <div class="document-list">
+                        {% for doc in docs %}
+                            <div class="document-row">
+                                <div class="file-type-icon {% if doc['name'].lower().endswith('.pdf') %}pdf-icon{% elif doc['name'].lower().endswith('.md') %}md-icon{% else %}txt-icon{% endif %}">
+                                    {% if doc["name"].lower().endswith(".pdf") %}PDF{% elif doc["name"].lower().endswith(".md") %}MD{% else %}TXT{% endif %}
+                                </div>
+                                <div class="document-info">
+                                    <strong title="{{ doc['name'] }}">{{ doc["name"] }}</strong>
+                                    <span>{{ doc["text"]|length }} characters · Available for search</span>
+                                </div>
+                                <span class="indexed-label"><span></span> Ready</span>
+                                <form method="POST" action="{{ url_for('delete_document', name=doc['name']) }}" onsubmit="return confirm('Delete this document?');">
+                                    <button class="delete-button" type="submit" title="Delete document" aria-label="Delete {{ doc['name'] }}">×</button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state documents-empty">
+                        <div class="empty-icon">▤</div>
+                        <h3>Your library is waiting</h3>
+                        <p>Upload your first document to start building your knowledge workspace.</p>
+                    </div>
+                {% endif %}
+            </article>
+
+            <article class="panel summary-panel" id="summarizer">
+                <div class="panel-heading">
+                    <div class="panel-icon green-icon">✧</div>
+                    <div>
+                        <h2>Quick Summary</h2>
+                        <p>Get the key points from a document.</p>
+                    </div>
+                </div>
+
+                {% if docs %}
+                    <form method="POST" class="summary-form">
+                        <input type="hidden" name="action" value="summarize">
+                        <label for="document_name">SELECT DOCUMENT</label>
+                        <select name="document_name" id="document_name" required>
+                            {% for doc in docs %}
+                                <option value="{{ doc['name'] }}">{{ doc["name"] }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="secondary-button">Generate summary <span>✧</span></button>
+                    </form>
+                {% else %}
+                    <div class="summary-placeholder">
+                        <div class="summary-art">✧</div>
+                        <p>Upload a document to unlock quick summaries.</p>
+                    </div>
+                {% endif %}
+
+                {% if summary %}
+                    <div class="summary-output">
+                        <div class="summary-output-heading"><span>✦</span> SUMMARY OUTPUT</div>
+                        <p>{{ summary }}</p>
+                    </div>
+                {% endif %}
+
+                <div class="summary-foot"><span>✦</span> Extractive summary based on document content.</div>
+            </article>
+
+        </section>
+
+        <footer class="footer">
+            <div class="footer-brand"><span>R✦</span> RecallIQ</div>
+            <p>Intelligent document search <span>·</span> Built for your knowledge</p>
+            <span class="footer-version">WORKSPACE v1.0</span>
+        </footer>
+
+    </main>
+</div>
+
+</body>
+</html>

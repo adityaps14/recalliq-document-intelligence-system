@@ -1,0 +1,37 @@
+﻿# Python virtual environment
+.venv/
+venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Allow an example environment file if one is added later
+!.env.example
+
+# Local uploaded documents
+uploads/*
+!uploads/.gitkeep
+
+# Local development files
+.vscode/
+.idea/
+*.log
+.DS_Store
+Thumbs.db
+
+# Test and coverage artifacts
+htmlcov/
+.coverage
+
+# Local backup copies
+*.backup.html
+*.backup.css
+
+# Accidental nested folder
+/recalliq-document-intelligence-system/
