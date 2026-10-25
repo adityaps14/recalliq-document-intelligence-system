@@ -136,7 +136,7 @@ RecallIQ/
 ## Author
 
 **Aditya Pratap Singh**  
-MCA General Student | Aspiring Software Developer
+MCA Student | Aspiring Software Developer
 
 GitHub: [@adityaps14](https://github.com/adityaps14)
 
